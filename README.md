@@ -2,11 +2,13 @@
 
 Counter for Andaj Ghar Chakki. Packed atta, gehun, cheeni, and daal sit on the board. Wheat a house brings in has its own chakki queue. Wholesale shops keep a khata for udhaar.
 
-The till is a Next.js and React app. The day book lives in this app, in `data/andaj.json`, which is created the first time you open the counter. You do not need the back office or a separate API to run it.
+This branch is a temporary static export for GitHub Pages. `main` stays the normal Next.js app. `npm run build` writes the site to `out/`, including `out/index.html`.
+
+The day book is kept in the browser (`localStorage`), because GitHub Pages cannot run the counter’s server. Each browser starts from the sample day and remembers that browser’s sales. **Reset sample** on the board puts the opening day back.
 
 The sample day opens on Rs 11,802 collected, Rs 78,200 shop udhaar, three mill tickets, and two open shop orders.
 
-## Run it
+## Run it locally
 
 You need Node 20.9+.
 
@@ -15,9 +17,13 @@ npm install
 npm run dev
 ```
 
-The counter listens on http://127.0.0.1:43127.
+The counter listens on http://127.0.0.1:43127/POS-Anaj-Ghar/
 
-On the board, **Reset sample** puts that opening day back. Practice bills stay in `data/andaj.json` and are not committed.
+## GitHub Pages
+
+The site is built for https://mtalhaali721.github.io/POS-Anaj-Ghar/
+
+In the repo, open Settings → Pages → Build and deployment, and set Source to **GitHub Actions**. A push to `cursor/github-pages-static-8113` publishes `out/`.
 
 ## How a sale works
 

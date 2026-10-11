@@ -1,5 +1,3 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { round2 } from "@/lib/money";
 import type {
   Bill,
@@ -40,7 +38,7 @@ type Book = {
   staff: Staff[];
 };
 
-const filePath = path.join(process.cwd(), "data", "andaj.json");
+const storageKey = "andaj-book-v1";
 const methods = ["cash", "card", "raast", "udhaar"];
 
 let queue: Promise<unknown> = Promise.resolve();
@@ -370,24 +368,27 @@ function sampleBook(): Book {
   };
 }
 
-async function readBook(): Promise<Book> {
-  try {
-    const raw = await readFile(filePath, "utf8");
-    return JSON.parse(raw) as Book;
-  } catch (err) {
-    const code = (err as NodeJS.ErrnoException).code;
-    if (code !== "ENOENT") throw err;
+function readBook(): Book {
+  if (typeof localStorage === "undefined") {
+    throw new CounterError("The mill book opens in the browser.");
+  }
+  const raw = localStorage.getItem(storageKey);
+  if (!raw) {
     const book = sampleBook();
-    await writeBook(book);
+    writeBook(book);
+    return book;
+  }
+  try {
+    return JSON.parse(raw) as Book;
+  } catch {
+    const book = sampleBook();
+    writeBook(book);
     return book;
   }
 }
 
-async function writeBook(book: Book) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  const temp = `${filePath}.tmp`;
-  await writeFile(temp, JSON.stringify(book));
-  await rename(temp, filePath);
+function writeBook(book: Book) {
+  localStorage.setItem(storageKey, JSON.stringify(book));
 }
 
 function dashboard(book: Book): Dashboard {
